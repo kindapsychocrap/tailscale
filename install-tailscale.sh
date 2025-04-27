@@ -1,8 +1,8 @@
 # install-tailscale.sh
-ing#!/usr/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 
-# Default to latest stable version
+# Default to specified or latest stable version
 TAILSCALE_VERSION=${TAILSCALE_VERSION:-1.82.5}
 TS_FILE="tailscale_${TAILSCALE_VERSION}_amd64.tgz"
 
