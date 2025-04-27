@@ -1,17 +1,19 @@
+# render.yaml
 services:
-  - type: worker
-    name: render-subnet-router
+  - type: web
+    name: render-tailscale-web
     env: docker
     autoDeploy: false
+    port: 8080
+    healthCheckPath: /
     envVars:
       - key: TAILSCALE_AUTHKEY
         sync: false
       - key: TAILSCALE_VERSION
-        value: 1.64.0
+        value: "1.82.5"
       - key: ADVERTISE_ROUTES
-        value: 10.0.0.0/8
+        value: "10.0.0.0/8"
     disk:
       name: tailscale-state
       mountPath: /var/lib/tailscale
       sizeGB: 1
-
