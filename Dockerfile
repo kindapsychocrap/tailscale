@@ -11,6 +11,7 @@ RUN apt-get update -qq \
        ca-certificates \
        wget \
        dnsutils \
+       bash \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure DNS lookup
@@ -19,7 +20,7 @@ RUN echo "+search +short" > /root/.digrc
 # Install Tailscale CLI and daemon
 COPY install-tailscale.sh /tmp/install-tailscale.sh
 RUN chmod +x /tmp/install-tailscale.sh \
-    && /tmp/install-tailscale.sh \
+    && bash /tmp/install-tailscale.sh \
     && rm /tmp/install-tailscale.sh
 
 # Copy startup script and web content
