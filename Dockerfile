@@ -1,28 +1,32 @@
+# Dockerfile
 FROM debian:latest
+
 WORKDIR /render
 
 ARG TAILSCALE_VERSION
-ENV TAILSCALE_VERSION=$TAILSCALE_VERSION
+ENV TAILSCALE_VERSION=${TAILSCALE_VERSION}
 
-RUN apt-get -qq update \
-  && apt-get -qq install --upgrade -y --no-install-recommends \
-    apt-transport-https \
-    ca-certificates \
-    netcat-openbsd \
-    wget \
-    dnsutils \
-  > /dev/null \
-  && apt-get -qq clean \
-  && rm -rf \
-    /var/lib/apt/lists/* \
-    /tmp/* \
-    /var/tmp/* \
-  && :
+RUN apt-get update -qq \
+    && apt-get install -qq -y --no-install-recommends \
+       ca-certificates \
+       wget \
+       dnsutils \
+    && rm -rf /var/lib/apt/lists/*
 
+# Configure DNS lookup
 RUN echo "+search +short" > /root/.digrc
-COPY run-tailscale.sh /render/
 
-COPY install-tailscale.sh /tmp
-RUN /tmp/install-tailscale.sh && rm -r /tmp/*
+# Install Tailscale CLI and daemon
+COPY install-tailscale.sh /tmp/install-tailscale.sh
+RUN chmod +x /tmp/install-tailscale.sh \
+    && /tmp/install-tailscale.sh \
+    && rm /tmp/install-tailscale.sh
 
-CMD ./run-tailscale.sh
+# Copy startup script and web content
+COPY run-tailscale.sh /render/run-tailscale.sh
+COPY web /render/web
+RUN chmod +x /render/run-tailscale.sh
+
+EXPOSE 8080
+
+CMD ["/render/run-tailscale.sh"]
