@@ -12,6 +12,7 @@ RUN apt-get update -qq \
        wget \
        dnsutils \
        bash \
+       dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure DNS lookup
@@ -19,7 +20,9 @@ RUN echo "+search +short" > /root/.digrc
 
 # Install Tailscale CLI and daemon
 COPY install-tailscale.sh /tmp/install-tailscale.sh
-RUN chmod +x /tmp/install-tailscale.sh \
+# Ensure Unix line endings to avoid CRLF shebang issues
+RUN dos2unix /tmp/install-tailscale.sh \
+    && chmod +x /tmp/install-tailscale.sh \
     && bash /tmp/install-tailscale.sh \
     && rm /tmp/install-tailscale.sh
 
